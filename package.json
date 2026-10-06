@@ -1,0 +1,1 @@
+{"name":"jodjum","version":"1.0.0","private":true,"description":"JoDJuM personal work log and dynamic form builder","scripts":{"start":"node server.cjs","check":"node --check dist/app.js && node --check dist/xlsx.js","test":"node tests.cjs"}}
