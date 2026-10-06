@@ -93,6 +93,25 @@ const newLog = task => `({id:uid(),date:'2026-10-06',task:${JSON.stringify(task)
   eq(await importing.run("commit('valid import',()=>state=initial(),{beforeImport:true})"),true);eq(importing.store.getItem('jodjum.v1.before-import'),oldRaw);
   const failingDraft=setup();failingDraft.run("modal={kind:'log',dirty:true};readLogForm=()=>({task:'Do not lose me'})");failingDraft.store.fail=true;failingDraft.run('closeModal()');eq(failingDraft.run('modal.kind'),'log');
 
+  // Copy drafts cannot replace a new-task draft, and resume by source record.
+  const copies=setup();copies.run(`showModal=()=>{};state.logs=[${newLog('Source')}];localStorage.setItem(draftKey(null),JSON.stringify({values:{task:'Original unfinished work'}}));openLog(state.logs[0].id,true);modal.dirty=true;readLogForm=()=>({date:'2026-10-06',project:'efinAI',task:'Copy in progress',status:'Done'});saveDraft()`);
+  const sourceId=copies.run('state.logs[0].id');
+  eq(JSON.parse(copies.store.getItem('jodjum.v1.draft.new')).values.task,'Original unfinished work');
+  eq(JSON.parse(copies.store.getItem('jodjum.v1.draft.copy.'+sourceId)).values.task,'Copy in progress');
+  copies.run('modal=null;openLog(state.logs[0].id,true)');eq(copies.run('modal.copySource'),sourceId);eq(copies.run('modal.editId'),null);
+  eq(copies.run('loadDraft(null,modal.copySource).values.task'),'Copy in progress');
+  eq(await copies.run('saveLog()'),true);eq(copies.run('state.logs.length'),2);
+  eq(copies.store.getItem('jodjum.v1.draft.copy.'+sourceId),null);ok(copies.store.getItem('jodjum.v1.draft.new'));
+  // IDs and time calculation are independent of the Settings preview.
+  ok(t.run("fieldControl(state.fields.find(f=>f.id==='date'),undefined,true).includes('id=\"preview-date\"')"));
+  ok(t.run("fieldControl(state.fields.find(f=>f.id==='date')).includes('id=\"input-date\"')"));
+  t.node('#input-start_time').value='01:00';t.node('#input-end_time').value='02:00';
+  t.node('#log-form #input-start_time').value='09:00';t.node('#log-form #input-end_time').value='10:30';t.run('calculateTime()');
+  eq(t.node('#log-form #input-duration').value,90);eq(t.node('#input-duration').value,'');
+  t.run("search='API';priorityFilter='High';period='today'");
+  const exportScope=t.run('exportContext()');ok(exportScope.includes('API')&&exportScope.includes('High')&&exportScope.includes('วันนี้'));
+  t.run("search='';priorityFilter='';period='all'");eq(t.run('exportContext()'),'');
+
   // Real HTTP server: malformed requests followed by a successful request.
   const server=http.createServer(handler);await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   const request=pathname=>new Promise((resolve,reject)=>http.get({hostname:'127.0.0.1',port:server.address().port,path:pathname},res=>{res.resume();res.on('end',()=>resolve(res.statusCode))}).on('error',reject));
@@ -102,5 +121,5 @@ const newLog = task => `({id:uid(),date:'2026-10-06',task:${JSON.stringify(task)
   const bytes=Buffer.from(await blob.arrayBuffer());eq(bytes.subarray(0,2).toString(),'PK');
   let offset=0;const archive=new Map();while(bytes.readUInt32LE(offset)===0x04034b50){const len=bytes.readUInt32LE(offset+18),nameLen=bytes.readUInt16LE(offset+26),extra=bytes.readUInt16LE(offset+28),start=offset+30+nameLen+extra;archive.set(bytes.subarray(offset+30,offset+30+nameLen).toString(),bytes.subarray(start,start+len).toString());offset=start+len}
   const worksheet=archive.get('xl/worksheets/sheet1.xml');ok(worksheet.includes('ไทย')&&worksheet.includes('🌿'));ok(worksheet.includes('\t')&&worksheet.includes('\n'));ok(!worksheet.includes('\u0001')&&!worksheet.includes('\u000b')&&!worksheet.includes('\ufffe')&&!worksheet.includes('\ud800'));ok(!worksheet.includes('<f>'));
-  console.log(`${checks} checks passed (cross-tab writes, imports, rollback, drafts, HTTP and XLSX).`);
+  console.log(`${checks} checks passed (cross-tab writes, imports, rollback, drafts, UX regressions, HTTP and XLSX).`);
 })().catch(error=>{console.error(error);process.exitCode=1;});

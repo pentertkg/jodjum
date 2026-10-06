@@ -297,3 +297,12 @@ td small { display:block; margin-top:3px; font-size:10px; color:#918879; }
   #toast { left:50%; width:max-content; bottom:17px; font-size:11px; padding:10px 13px; }
 }
 @media(prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; transition:none!important; } }
+
+/* Accessible navigation and explicit export scope. */
+.drawer-close { display:none; }
+.export-context { padding:12px; margin:16px 0; background:var(--cream); border:1px solid #efe6cc; border-radius:4px; }
+.export-context p { margin:0 0 8px; font-size:12px; }
+.export-context > div { display:flex; flex-wrap:wrap; gap:7px; }
+.export-context button { background:#fff; }
+.export-context svg { width:13px; height:13px; }
+@media(max-width:680px) { .drawer-close { display:flex; align-self:flex-end; margin-bottom:8px; } }
