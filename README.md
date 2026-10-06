@@ -28,9 +28,14 @@ System metadata: id, user_id, user, created_at, updated_at. ข้อมูล�
 
 รัน `npm run check` ตรวจไวยากรณ์ และ `npm test` ตรวจการกรอง Validation การคำนวณเวลา การรักษาข้อมูล และ XLSX
 
-## สี Acid Jungle
+## UX/UI แบบ Workspace
 
-ใช้สีจากภาพอ้างอิง: Cream `#FFF6DD`, Lime `#BEE687`, Mint `#61D195`, Blue `#2B91C5`, Pink `#FF88A4` พื้นหลังครีม ปุ่มหลักมิ้นต์ เมนูที่เลือกเขียวอ่อน กราฟฟ้า และสถานะติดปัญหาชมพู ใช้ตัวหนังสือเข้มและสีที่ปรับความเข้มสำหรับข้อความเพื่อรักษาความอ่านง่าย
+ใช้ Notion เป็นแนวทางด้านลำดับข้อมูล: Sidebar กระชับ หน้าคล้ายเอกสาร พื้นขาว ตารางเส้นบาง และฟอร์มอ่านง่าย โดยคงชื่อและฟังก์ชัน JoDJuM
+
+- ค้นหางานจาก Sidebar หรือปุ่มแว่นขยาย ใช้ Ctrl/⌘ K ได้
+- มุมมองด่วนสำหรับงานวันนี้ งานที่ยังไม่เสร็จ และงานที่เสร็จแล้ว
+- สลับตาราง/ปฏิทินจากแถบมุมมอง เมนูยุบได้บน desktop และเปิดแบบ drawer บนมือถือ
+- Acid Jungle เป็นสีเน้น: Cream `#FFF6DD`, Lime `#BEE687`, Mint `#61D195`, Blue `#2B91C5`, Pink `#FF88A4` ใช้กับไอคอน สถานะ วันที่เลือก และกราฟ
 
 ## การป้องกันข้อมูลหายและการกู้คืน
 
@@ -42,4 +47,4 @@ System metadata: id, user_id, user, created_at, updated_at. ข้อมูล�
 - Local server ตอบ 400 สำหรับ URL encoding ผิด และรับ request ถัดไปได้ตามปกติ
 - Excel กรองอักขระที่ XML ไม่ยอมรับ โดยรักษาภาษาไทย อีโมจิ tab และ newline
 
-ชุดทดสอบ `npm test` ใช้ transaction queue ร่วมกันจำลองหลายแท็บ ตรวจ storage conflict/rollback/Undo, schema import, draft และเรียก HTTP server จริงบนพอร์ตชั่วคราว ยังคงต้องทดสอบการใช้งานหน้าจอจริงบน Chrome และมือถือแยกต่างหาก
+ชุดทดสอบ `npm test` ใช้ transaction queue ร่วมกันจำลองหลายแท็บ ตรวจ storage conflict/rollback/Undo, schema import, draft และเรียก HTTP server จริงบนพอร์ตชั่วคราว ตรวจ UI จริงผ่านเบราว์เซอร์เพิ่มเติมสำหรับการค้นหา สลับมุมมอง บันทึกงาน และการแสดงผล desktop/mobile
