@@ -134,6 +134,18 @@ const newLog = task => `({id:uid(),date:'2026-10-06',task:${JSON.stringify(task)
   ok(!/\b(?:confirm|prompt|alert)\s*\(/.test(source));
   ok(source.includes('id="log-form" class="modal-body" novalidate')&&source.includes('id="field-form" class="modal-body" novalidate'));
 
+  // Backup reminder: real records only, seven days, snooze and corrupt metadata.
+  const reminder=setup();eq(reminder.run('backupDue(1000000000)'),false);
+  reminder.run(`state.logs=[${newLog('Real work')}]`);eq(reminder.run('backupDue(1000000000)'),true);
+  reminder.run('state.logs[0].demo=true');eq(reminder.run('backupDue(1000000000)'),false);
+  reminder.run('state.logs[0].demo=false;writeBackupMeta({exportedAt:1000000000})');
+  eq(reminder.run('backupDue(1000000000+6*DAY)'),false);eq(reminder.run('backupDue(1000000000+7*DAY)'),true);
+  reminder.run('writeBackupMeta({snoozedUntil:1000000000+DAY})');eq(reminder.run('backupDue(1000000000)'),false);eq(reminder.run('backupDue(1000000000+DAY)'),true);
+  reminder.store.setItem('jodjum.v1.backup-reminder','broken');eq(reminder.run('backupDue(1000000000)'),true);
+  reminder.store.setItem('jodjum.v1.backup-reminder','null');eq(reminder.run('backupDue(1000000000)'),true);
+  reminder.run('recoveryRaw="corrupt"');eq(reminder.run('backupDue(1000000000)'),false);
+  reminder.store.fail=true;eq(reminder.run('writeBackupMeta({exportedAt:1000000000})'),false);
+
   // Real HTTP server: malformed requests followed by a successful request.
   const server=http.createServer(handler);await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   const request=pathname=>new Promise((resolve,reject)=>http.get({hostname:'127.0.0.1',port:server.address().port,path:pathname},res=>{res.resume();res.on('end',()=>resolve(res.statusCode))}).on('error',reject));
