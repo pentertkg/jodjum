@@ -74,9 +74,7 @@ kbd { font-family:inherit; font-size:12px; line-height:1.5; padding:1px 5px; bor
 .menu-toggle { padding:4px; }
 .sidebar-collapsed .sidebar { transform:translateX(-100%); }
 .sidebar-collapsed .main { margin-left:0; }
-.page-head { max-width:1200px; margin:48px auto 26px; display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
-.page-icon { display:grid; place-items:center; width:48px; height:48px; margin-bottom:20px; border-radius:7px; background:var(--cream); color:#6b5a32; }
-.page-icon svg { width:31px; height:31px; stroke-width:1.35; }
+.page-head { max-width:1200px; margin:36px auto 26px; display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
 .page-head h1 { margin:0 0 9px; font-size:38px; font-weight:700; letter-spacing:-1.1px; line-height:1.25; }
 .sub { color:var(--muted); font-size:14px; margin:0; }
 .head-actions { display:flex; align-items:center; gap:8px; padding-bottom:3px; flex-shrink:0; }
@@ -272,7 +270,6 @@ td small { display:block; margin-top:3px; font-size:12px; color:var(--muted); }
   .topbar { margin:0 -19px; padding:0 14px; height:49px; }
   .top-right { font-size:12px; gap:8px; } .top-right .avatar,.top-right .local-status { display:none; }
   .page-head { margin:29px auto 24px; gap:12px; flex-wrap:wrap; }
-  .page-icon { height:40px; width:40px; margin-bottom:15px; }.page-icon svg { width:26px; }
   .page-head h1 { font-size:30px; letter-spacing:-.7px; } .sub { font-size:13px; }
   .head-actions { width:100%; padding:3px 0 0; } .head-actions button { font-size:13px; }
   .head-actions .export-shortcut { margin-left:auto; order:1; } .head-actions .secondary-label { display:inline; }
