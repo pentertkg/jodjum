@@ -27,3 +27,7 @@ Excel เป็น XLSX จริง (ZIP + SpreadsheetML) ไม่ใช่ CS
 System metadata: id, user_id, user, created_at, updated_at. ข้อมูลเพิ่มเติมเก็บด้วย stable field IDs ใน custom object การลบฟิลด์เก็บ schema ใน archivedFields จึงเปิดดูและ Export ข้อมูลเดิมได้
 
 รัน `npm run check` ตรวจไวยากรณ์ และ `npm test` ตรวจการกรอง Validation การคำนวณเวลา การรักษาข้อมูล และ XLSX
+
+## สี Acid Jungle
+
+ใช้สีจากภาพอ้างอิง: Cream `#FFF6DD`, Lime `#BEE687`, Mint `#61D195`, Blue `#2B91C5`, Pink `#FF88A4` พื้นหลังครีม ปุ่มหลักมิ้นต์ เมนูที่เลือกเขียวอ่อน กราฟฟ้า และสถานะติดปัญหาชมพู ใช้ตัวหนังสือเข้มและสีที่ปรับความเข้มสำหรับข้อความเพื่อรักษาความอ่านง่าย
