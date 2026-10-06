@@ -307,3 +307,38 @@ td small { display:block; margin-top:3px; font-size:12px; color:var(--muted); }
 .export-context button { background:#fff; }
 .export-context svg { width:13px; height:13px; }
 @media(max-width:680px) { .drawer-close { display:flex; align-self:flex-end; margin-bottom:8px; } }
+
+/* JoDJuM dialogs replace browser prompts and native picker popups. */
+.web-dialog-backdrop { position:fixed; inset:0; z-index:200; background:#17261f80; display:flex; align-items:center; justify-content:center; padding:20px; }
+.web-dialog { width:440px; max-width:100%; max-height:90dvh; overflow:auto; background:var(--paper); border:1px solid var(--line); border-radius:9px; box-shadow:var(--shadow); }
+.web-dialog header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:20px 22px 14px; border-bottom:1px solid var(--line); }
+.web-dialog h2 { margin:0; font-size:21px; color:var(--ink); }
+.web-dialog-body { padding:18px 22px; }
+.web-dialog-body > p { color:var(--muted); margin:0 0 18px; font-size:14px; overflow-wrap:anywhere; }
+.web-dialog-body > p:empty { display:none; }
+.web-dialog-body > label { display:block; font-size:13px; margin-bottom:8px; }
+.web-dialog-body > input { width:100%; }
+.web-dialog footer { display:flex; justify-content:flex-end; gap:8px; padding:14px 22px; border-top:1px solid var(--line); background:#f7f8f5; }
+button.primary.destructive { background:#92314d; border-color:#92314d; }
+button.primary.destructive:hover { background:#75213a; }
+.picker-trigger { width:100%; justify-content:space-between; text-align:left; font-weight:400; padding:8px 10px; min-width:0; background:#fff; }
+.picker-trigger span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.picker-trigger svg { color:var(--muted); }
+.toolbar .picker-trigger { width:auto; flex:0 1 180px; font-size:13px; }
+.range-input .picker-trigger { width:145px; padding:5px 8px; font-size:12px; border:1px solid var(--control-border); background:#fff; }
+.web-options { display:grid; gap:6px; max-height:48dvh; overflow:auto; }
+.web-options label { display:flex; align-items:center; gap:10px; padding:10px; border:1px solid var(--line); border-radius:5px; cursor:pointer; font-size:14px; }
+.web-options label:has(input:checked) { background:#e5f0d5; border-color:#5c7851; }
+.web-options input { margin:0; flex-shrink:0; }
+.web-month { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.web-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px; }
+.web-days > span { text-align:center; color:var(--muted); font-size:12px; padding-bottom:5px; }
+.web-days button { padding:6px 2px; border-color:transparent; font-size:13px; }
+.web-days button.other-month { color:var(--muted); background:#f2f4ef; }
+.web-days button[aria-pressed=true] { background:#e5f0d5; border-color:#5c7851; font-weight:600; }
+.web-selected { font-size:13px; color:var(--ink); margin:12px 0 0; }
+.web-time { display:flex; align-items:center; gap:12px; margin-top:16px; }
+.web-time label { display:grid; gap:6px; font-size:13px; }
+.web-time input { width:100%; }
+.web-picker-actions { display:flex; gap:8px; margin-top:15px; }
+@media(max-width:680px) { .web-dialog-backdrop { padding:14px; }.web-dialog header,.web-dialog-body,.web-dialog footer { padding:16px; }.toolbar .picker-trigger { flex:1; min-width:110px; }.range-input .picker-trigger { width:auto; flex:1; min-width:0; }.web-dialog h2 { font-size:20px; } }

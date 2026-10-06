@@ -19,6 +19,7 @@ function setup(store = storage(), lock = locks()) {
   const nodes = new Map(), events = new Map();
   const node = selector => { if (!nodes.has(selector)) nodes.set(selector, { innerHTML: '', classList: { add() {}, remove() {} }, value: '', hidden: false, focus() {}, addEventListener() {} }); return nodes.get(selector); };
   const context = vm.createContext({ console, crypto: require('node:crypto').webcrypto, TextEncoder, Blob, URL, Intl, Date, structuredClone, setTimeout: () => 0, clearTimeout() {}, localStorage: store, navigator: { locks: lock }, document: { querySelector: node, querySelectorAll: () => [], addEventListener() {} }, window: { addEventListener: (name, fn) => events.set(name, fn) }, confirm: () => true });
+  vm.runInContext(fs.readFileSync('dist/dialogs.js','utf8'),context);
   vm.runInContext(source, context);
   vm.runInContext('render=()=>{}', context);
   vm.runInContext(fs.readFileSync('dist/xlsx.js', 'utf8'), context);
@@ -111,6 +112,27 @@ const newLog = task => `({id:uid(),date:'2026-10-06',task:${JSON.stringify(task)
   t.run("search='API';priorityFilter='High';period='today'");
   const exportScope=t.run('exportContext()');ok(exportScope.includes('API')&&exportScope.includes('High')&&exportScope.includes('วันนี้'));
   t.run("search='';priorityFilter='';period='all'");eq(t.run('exportContext()'),'');
+
+  // Custom dialogs resolve asynchronously; cancel never changes the underlying form.
+  const popups=setup();popups.run("modal={kind:'log',dirty:true};document.activeElement=null");
+  const cancelPopup=popups.run("askConfirm('Delete','Confirm deletion','Delete',true)");
+  eq(popups.run('dialogActive()'),true);popups.node('#web-cancel').onclick();eq(await cancelPopup,false);eq(popups.run('modal.kind'),'log');eq(popups.run('modal.dirty'),true);
+  const acceptPopup=popups.run("askConfirm('Delete','Confirm deletion')");popups.node('#web-dialog-form').onsubmit({preventDefault(){}});eq(await acceptPopup,true);eq(popups.run('dialogActive()'),false);
+  const projectPopup=popups.run('askProject()');popups.node('#project-name').value='  ';popups.node('#web-dialog-form').onsubmit({preventDefault(){}});eq(popups.run('dialogActive()'),true);ok(popups.node('#web-error').textContent);
+  popups.node('#project-name').value=' New project ';popups.node('#web-dialog-form').onsubmit({preventDefault(){}});eq(await projectPopup,'New project');
+  const timePopup=popups.run("chooseDateTime({value:''},'Time','time')");popups.node('#web-hour').value='25';popups.node('#web-minute').value='30';popups.node('#web-dialog-form').onsubmit({preventDefault(){}});eq(popups.run('dialogActive()'),true);
+  popups.node('#web-hour').value='10';popups.node('#web-dialog-form').onsubmit({preventDefault(){}});eq(await timePopup,'10:30');
+  const datePopup=popups.run("chooseDateTime({value:'2024-02-29'},'Date','date')");popups.node('#web-dialog-form').onsubmit({preventDefault(){}});eq(await datePopup,'2024-02-29');
+  popups.run("modal=null;view='settings';settings=defaults();settings[2].label='Unsaved label'");
+  const cancelNavigation=popups.run("go('dashboard')");popups.node('#web-cancel').onclick();eq(await cancelNavigation,false);eq(popups.run('view'),'settings');eq(popups.run('settings[2].label'),'Unsaved label');
+  const acceptNavigation=popups.run("go('dashboard')");popups.node('#web-dialog-form').onsubmit({preventDefault(){}});eq(await acceptNavigation,true);eq(popups.run('view'),'dashboard');eq(popups.run('settings'),null);
+  // Import confirmation integrates with the custom dialog and preserves cancellation.
+  const importDialog=setup();await importDialog.run(`commit('original',()=>state.logs.push(${newLog('Keep original')}))`);importDialog.run('bindSettings()');
+  const importRaw=importDialog.store.getItem('jodjum.v1'),replacement=importDialog.run('JSON.stringify(initial())');
+  const cancelImport=importDialog.node('#backup-file').onchange({target:{files:[{text:async()=>replacement}]}});await new Promise(setImmediate);importDialog.node('#web-cancel').onclick();await cancelImport;eq(importDialog.store.getItem('jodjum.v1'),importRaw);
+  const acceptImport=importDialog.node('#backup-file').onchange({target:{files:[{text:async()=>replacement}]}});await new Promise(setImmediate);importDialog.node('#web-dialog-form').onsubmit({preventDefault(){}});await acceptImport;eq(importDialog.run('state.logs.length'),0);eq(importDialog.store.getItem('jodjum.v1.before-import'),importRaw);
+  ok(!/\b(?:confirm|prompt|alert)\s*\(/.test(source));
+  ok(source.includes('id="log-form" class="modal-body" novalidate')&&source.includes('id="field-form" class="modal-body" novalidate'));
 
   // Real HTTP server: malformed requests followed by a successful request.
   const server=http.createServer(handler);await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
