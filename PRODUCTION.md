@@ -3,6 +3,11 @@
 ปลายทางส่วนตัว: https://jodjum-worklog.efintools01.chatgpt.site
 ใช้ Chrome ผ่าน HTTPS เพื่อรองรับ Web Locks และ localStorage
 
+## Vercel
+
+ปลายทาง Vercel: https://jodjum-seven.vercel.app/
+`vercel.json` กำหนด Framework เป็น Other (`null`) ไม่ใช้ build command และเสิร์ฟ static จาก `dist` โดยตรง `server.cjs` ใช้สำหรับ localhost เท่านั้น หากเลือก Node preset จะสร้าง Function จากเซิร์ฟเวอร์ในเครื่องและอาจเกิด `FUNCTION_INVOCATION_FAILED`
+
 ## ย้ายข้อมูลจาก localhost
 
 1. เปิด localhost ด้วย browser/profile ที่บันทึกงานไว้ ไปตั้งค่า → สำรองข้อมูล JSON
